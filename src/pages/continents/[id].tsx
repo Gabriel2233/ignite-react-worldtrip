@@ -1,13 +1,13 @@
 import { ReactNode } from 'react'
 
-import { Flex, Box, Tooltip, Image, Heading, Text, SimpleGrid, IconButton } from '@chakra-ui/react'
+import { Flex, Box, Image, Heading, Text, SimpleGrid, IconButton } from '@chakra-ui/react'
 import { Header } from '../../components/Header'
 import { FiChevronLeft } from 'react-icons/fi'
 
 import { GetStaticProps, GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
 
-import { Continent as TContinent } from '../../types'
+import { Continent as TContinent, Country } from '../../types'
 
 type ContinentProps = {
   continent: TContinent
@@ -46,8 +46,8 @@ export default function Continents({ continent }: ContinentProps) {
         >{continent.name}</Text>
       </Flex>
 
-      <Flex w="60%" align="center" justify="space-between" my="4rem">
-        <Text color="gray.600" w="50%" fontSize="xl">
+      <Flex w="80%" align="center" justify="space-between" my="4rem" flexDir={["column", "row", "row"]}>
+        <Text color="gray.600" w={["80%", "60%", "50%"]} fontSize={["md", "lg", "xl"]} my="1rem">
           {continent.long_description}
         </Text>
 
@@ -58,7 +58,33 @@ export default function Continents({ continent }: ContinentProps) {
           </ContinentInfoCard>
         </Flex>
       </Flex>
+
+      <Flex w="80%" flexDir="column">
+        <Heading size="xl" color="gray.700" my={4}>Cidades +100</Heading>
+
+        <SimpleGrid columns={[1, 2, 4]} gap={10}>
+          {continent.countries.map(data => (
+            <CityCard {...data} />
+          ))}
+        </SimpleGrid>
+      </Flex>
     </Flex>
+  )
+}
+
+export function CityCard({ id, capital, flag, name, image }: Country) {
+  return (
+    <Box maxW="lg" borderWidth="1px" borderRadius="lg" overflow="hidden" key={id} my="2rem">
+      <Image src={image} alt={name} h="175px" w="100%" />
+      <Flex w="100%" p={3} align="center" justify="space-between">
+        <div>
+          <Text fontWeight="bold" fontSize="lg" mb={4} color="gray.800">{name}</Text>
+          <Text fontSize="md" color="gray.600">{capital}</Text>
+        </div>
+
+        <Image boxSize="50px" borderRadius="50%" src={flag} alt={name} />
+      </Flex>
+    </Box>
   )
 }
 

@@ -1,8 +1,17 @@
-import { Box, Flex, SimpleGrid, Image, Heading, Text, Divider } from '@chakra-ui/react'
-
+import { Box, Flex, SimpleGrid, Image, Heading, Text, Divider, useBreakpointValue } from '@chakra-ui/react'
 import { Header } from '../components/Header'
+import { SwiperComponent } from '../components/Swiper'
 
-export default function Home() {
+import { GetStaticProps } from 'next'
+
+import { Continent } from '../types'
+
+type HomeProps = {
+  continents: Continent[]
+}
+
+export default function Home({ continents }: HomeProps) {
+
   return (
     <Flex flexDir="column" w="full" h="full" align="center">
       <Header>
@@ -26,7 +35,7 @@ export default function Home() {
         </Flex>
       </Flex>
 
-      <SimpleGrid spacing={50} columns={[2, null, 5]}>
+      <SimpleGrid spacing={25} columns={[2, null, 5]} align="center">
         <TripType source="./cocktail.svg" title="Vida noturna" />
         <TripType source="./cocktail.svg" title="Praia" />
         <TripType source="./cocktail.svg" title="Moderna" />
@@ -40,6 +49,10 @@ export default function Home() {
         Vamos nessa?<br />
         Entao escolha seu continente
       </Heading>
+
+      <Box w="80%" my="2rem">
+        <SwiperComponent items={continents} />
+      </Box>
     </Flex>
   )
 }
@@ -50,10 +63,25 @@ type TripTypeProps = {
 }
 
 export function TripType({ source, title }: TripTypeProps) {
+
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  })
+
   return (
-    <Flex align="center" justify="center" flexDir="column" p={2}>
-      <Image src={source} boxSize="100px" />
+    <Flex align="center" justify="center" flexDir={["row", "column", "column"]} p={2}>
+      { isWideVersion ? <Image src={source} boxSize="100px" /> : <Text mx={2} fontSize="2xl" color="yellow.400">&bull;</Text>}
       <Text fontWeight="bold" fontSize="lg" color="gray.700" mt={4}>{title}</Text>
     </Flex>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const data = await fetch("http://localhost:4000/continents")
+  const continents = await data.json()
+
+  return {
+    props: { continents }
+  }
 }
